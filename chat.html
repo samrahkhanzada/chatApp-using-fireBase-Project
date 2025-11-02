@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Group Chat App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" href="favicon.ico.png" type="image/x-icon">
+  
+  </head>
+  <body>
+    <div class="chat-container">
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="user-info">
+          <div class="avatar">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="user-details">
+            <h2>Future Developer's Group</h2>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="toggle-button" id="themeToggle">
+            <i class="fas fa-palette"></i>
+          </button>
+          <button id="logOut" class="logout-button">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Theme Selector Panel -->
+      <div class="theme-selector" id="themeSelector">
+        <div class="theme-option">
+          <h3>Theme Mode</h3>
+          <div class="theme-buttons">
+            <button class="theme-btn light-theme active" id="light">
+              Light
+            </button>
+            <button class="theme-btn dark-theme" id="dark">Dark</button>
+          </div>
+        </div>
+        <div class="theme-option">
+          <h3>Background Themes</h3>
+          <div class="background-options">
+            <div class="bg-option active" id="theme-1">
+              <img src="./theme01.jpg" alt="Blue Aesthetic" />
+            </div>
+            <div class="bg-option" id="theme-2">
+              <img src="./theme2.jpg" alt="Pink Theme" />
+            </div>
+            <div class="bg-option" id="theme-3">
+              <img src="./theme3.jpg" alt="Purple Theme" />
+            </div>
+            <div class="bg-option" id="theme-4">
+              <img src="./theme4.png" alt="Abstract Theme" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-container" id="messagesContainer"></div>
+      <!-- Input Area -->
+      <div class="input-container">
+        <input
+          type="text"
+          class="message-input"
+          placeholder="Type a message..."
+          id="int"
+        />
+        <button class="send-button" onclick="sendBtn()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+    <script src="app2.js"></script>
+  </body>
+</html>
