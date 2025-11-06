@@ -37,8 +37,55 @@ const provider = new GoogleAuthProvider();
 
 // Auth functions
 function handleAuthError(error) {
-  alert(`Error: ${error.message}`);
+  swal("Error!", error.message, "error");
   console.error(error);
+}
+
+// SweetAlert confirmation function
+async function confirmAction(title, text, confirmButtonText = "Yes") {
+  return swal({
+    title: title,
+    text: text,
+    icon: "warning",
+    buttons: {
+      cancel: {
+        text: "Cancel",
+        value: false,
+        visible: true,
+      },
+      confirm: {
+        text: confirmButtonText,
+        value: true,
+      },
+    },
+    dangerMode: true,
+  });
+}
+
+// SweetAlert prompt function
+async function promptMessage(title, text, placeholder = "") {
+  return swal({
+    title: title,
+    text: text,
+    content: {
+      element: "input",
+      attributes: {
+        placeholder: placeholder,
+        type: "text",
+      },
+    },
+    buttons: {
+      cancel: {
+        text: "Cancel",
+        value: null,
+        visible: true,
+      },
+      confirm: {
+        text: "OK",
+        value: true,
+      },
+    },
+  });
 }
 
 // Sign Up
@@ -49,14 +96,15 @@ document.getElementById("signUp")?.addEventListener("click", (e) => {
   const password = document.getElementById("password").value;
 
   if (!email || !password) {
-    alert("Please fill in all required fields");
+    swal("Oops!", "Please fill in all required fields", "warning");
     return;
   }
 
   createUserWithEmailAndPassword(auth, email, password)
     .then(() => {
-      alert("SignUp Successfully ✅");
-      window.location.href = "chat.html";
+      swal("Success!", "SignUp Successfully ✅", "success").then(() => {
+        window.location.href = "chat.html";
+      });
     })
     .catch(handleAuthError);
 });
@@ -69,14 +117,15 @@ document.getElementById("login")?.addEventListener("click", (e) => {
   const password = document.getElementById("password").value;
 
   if (!email || !password) {
-    alert("Please fill in email and password");
+    swal("Oops!", "Please fill in email and password", "warning");
     return;
   }
 
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
-      alert("Login Successfully ✅");
-      window.location.href = "chat.html";
+      swal("Success!", "Login Successfully ✅", "success").then(() => {
+        window.location.href = "chat.html";
+      });
     })
     .catch(handleAuthError);
 });
@@ -86,22 +135,31 @@ document.getElementById("google-btn")?.addEventListener("click", (e) => {
   e.preventDefault();
   signInWithPopup(auth, provider)
     .then(() => {
-      alert("Login Successfully ✅");
-      window.location.href = "chat.html";
+      swal("Success!", "Login Successfully ✅", "success").then(() => {
+        window.location.href = "chat.html";
+      });
     })
     .catch(handleAuthError);
 });
 
 // Logout
 document.getElementById("logOut")?.addEventListener("click", () => {
-  signOut(auth)
-    .then(() => {
-      alert("LogOut Successfully ✅");
-      window.location.href = "index.html";
-    })
-    .catch(handleAuthError);
+  confirmAction("Logout", "Are you sure you want to logout?", "Logout").then(
+    (willLogout) => {
+      if (willLogout) {
+        signOut(auth)
+          .then(() => {
+            swal("Success!", "LogOut Successfully ✅", "success").then(() => {
+              window.location.href = "index.html";
+            });
+          })
+          .catch(handleAuthError);
+      }
+    }
+  );
 });
 
+// Send Message
 // Send Message
 window.sendBtn = function () {
   const messageInput = document.getElementById("int");
@@ -119,9 +177,16 @@ window.sendBtn = function () {
       userName: userName,
     });
     messageInput.value = "";
+
+    // Close emoji picker if it exists
+    const emojiPicker = document.getElementById("emojiPicker");
+    const emojiButton = document.getElementById("emojiButton");
+    if (emojiPicker && emojiButton) {
+      emojiPicker.classList.remove("show");
+      emojiButton.classList.remove("active");
+    }
   }
 };
-
 // Display Messages
 onChildAdded(ref(db, "chat-msg"), function (snapshot) {
   const data = snapshot.val();
@@ -187,13 +252,20 @@ onChildAdded(ref(db, "chat-msg"), function (snapshot) {
     });
 
     deleteBtn.addEventListener("click", () => {
-      if (confirm("Delete this message?")) {
-        remove(ref(db, "chat-msg/" + key))
-          .then(() => {
-            messageElement.remove();
-          })
-          .catch(handleAuthError);
-      }
+      confirmAction(
+        "Delete Message",
+        "Are you sure you want to delete this message?",
+        "Delete"
+      ).then((willDelete) => {
+        if (willDelete) {
+          remove(ref(db, "chat-msg/" + key))
+            .then(() => {
+              messageElement.remove();
+              swal("Deleted!", "Your message has been deleted.", "success");
+            })
+            .catch(handleAuthError);
+        }
+      });
     });
   }
 });
@@ -206,3 +278,17 @@ function formatTime(date) {
   const formattedHours = hours % 12 || 12;
   return `${formattedHours}:${minutes} ${ampm}`;
 }
+
+// Add Enter key functionality for sending messages
+document.addEventListener("DOMContentLoaded", function () {
+  const messageInput = document.getElementById("int");
+
+  if (messageInput) {
+    messageInput.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent default form submission
+        sendBtn(); // Call your existing send function
+      }
+    });
+  }
+});

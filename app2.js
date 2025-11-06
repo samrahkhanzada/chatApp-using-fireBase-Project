@@ -47,3 +47,44 @@ document.getElementById("theme-4").addEventListener("click", () => {
   let msgCont = document.getElementById("messagesContainer");
   msgCont.style.background = "url('./theme4.png') center/cover";
 });
+
+// Emoji Picker Functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const emojiButton = document.getElementById("emojiButton");
+  const emojiPicker = document.getElementById("emojiPicker");
+  const messageInput = document.getElementById("int");
+
+  // Toggle emoji picker
+  emojiButton.addEventListener("click", function () {
+    emojiPicker.classList.toggle("show");
+    emojiButton.classList.toggle("active");
+  });
+
+  // Add emoji to input
+  const emojis = document.querySelectorAll(".emoji");
+  emojis.forEach((emoji) => {
+    emoji.addEventListener("click", function () {
+      messageInput.value += this.textContent;
+      messageInput.focus();
+    });
+  });
+
+  // Close emoji picker when clicking outside
+  document.addEventListener("click", function (event) {
+    if (
+      !emojiButton.contains(event.target) &&
+      !emojiPicker.contains(event.target)
+    ) {
+      emojiPicker.classList.remove("show");
+      emojiButton.classList.remove("active");
+    }
+  });
+
+  // Close emoji picker on Escape key
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      emojiPicker.classList.remove("show");
+      emojiButton.classList.remove("active");
+    }
+  });
+});
